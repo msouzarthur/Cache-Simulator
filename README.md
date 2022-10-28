@@ -1,2 +1,4 @@
 # Cache-Simulator
-Trabalho de simulador de caches desenvolvido para a disciplina de Arquitetura e Organização de Computadores 2
+- Trabalho de simulador de caches 
+- Arquitetura e Organização de Computadores 2
+- Arthur Souza e Rafael Grimmler
