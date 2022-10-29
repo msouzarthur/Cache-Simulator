@@ -35,7 +35,7 @@
     <li>nMissConf é o número de misses de conflito</li>
     <li>fifoList é um array auxiliar usado para controle de substituição do FIFO</li>
     <li>bloco tem formato dois formatos de lista</li> 
-    <ul<
+    <ul>
     <li>bit de validade e tag</li>
     <li>bit de validade, tag e índice da política de LRU</li>
     </ul>
