@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 29 07:46:43 2022
-
 @author: arthur souza
 @author: rafael grimmler
 """
@@ -14,11 +12,8 @@ cache_simulator 256 1 2 R 1 bin_10000.bin
 cache_simulator 512 8 2 R 1 vortex.in.sem.persons.bin
 '''
 
-import pandas as pd
 import os.path
 import math
-from pprint import pprint
-from pprint import pp
 from numpy import random
 
 ''' variáveis globais '''
@@ -188,16 +183,26 @@ def isFull():
   
 def printCache():
     global mem, nSets
+    print("i",end='\t')
+    print("[val,tag]")
     for l in range(nSets):
-        print(l, mem[l])
+        print(l,end="\t")
+        print(mem[l])
 
 
 def printEx():
     #exibe as informacoes finais
-    global nAccess, nHits, nMiss, nMissComp, nMissCap, nMissConf, nFlag, nSets
+    global nAccess, nHits, nMiss, nMissComp, nMissCap, nMissConf, nFlag, nSets, subs
     nMiss = nMissComp + nMissCap + nMissConf
     if nFlag == 0:
         printCache()
+        print('politica - {}'.format(subs))
+        print('acessos - {}'.format(nAccess))
+        print('hits - {:.2f}%'.format(100*(nHits/nAccess)))
+        print('misses - {:.2f}%'.format(100*(nMiss/nAccess)))
+        print('misses compulsorios - {:.2f}%'.format(100*(nMissComp/(nMiss))))
+        print('misses capacidade - {:.2f}%'.format(100*(nMissCap/(nMiss))))
+        print('misses conflito - {:.2f}%'.format(100*(nMissConf/(nMiss))))
     elif nFlag == 1:
         print('{}, {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f}'.format(nAccess, nHits/nAccess, nMiss/nAccess, nMissComp/(nMiss), nMissCap/(nMiss), nMissConf/(nMiss)))        
 
