@@ -107,7 +107,7 @@ def printCache():
     
 def run():
     global mem, nAcess, nHits, nMissComp, nMissCap, nMissConf, fifoCount
-    
+    # le o arquivo
     f =  open(file,'rb')
     line = f.read(4)
     
@@ -116,27 +116,23 @@ def run():
         fHit = False
         nAcess += 1
         number = int.from_bytes(line, byteorder='big', signed=False)
-
+        #pega o endereco
         target ='{:032b}'.format(number)
-        #print(target)
-        
+       
+        #calcula os bits das infos
         index = int(math.log(nSets,2))
         offset = int(math.log(bSize,2))
         tag = int(32-index-offset)
         
-        #print("{} - {} - {} - {}".format(target,offset,index,tag))
-        
+        #calcula as infos em decimal
         intOffset = int("".join(list(target[(32-offset):32])),2) if offset>0 else 0
-        # ver erro
         intIndex = int("".join(list(target[(32-offset-index):32-offset])),2) if index>0 else 0
-        
         intTag = int("".join(list(target[:(32-offset-index)])),2)
-    
+        
+        #seleciona o index da memoria
         cacheIndex = intIndex%nSets if intIndex > 0 else 0
         
         if assoc > 1:
-            #Xndex = isLineFull(cacheIndex)
-            #print(Xndex ,mem[0][cacheIndex][0],mem[1][cacheIndex][0],mem[2][cacheIndex][0],mem[3][cacheIndex][0])
             for p in range(assoc):
                 if mem[p][cacheIndex][1] == intTag:
                     nHits+=1
@@ -202,6 +198,7 @@ def findBiggerPol(line):
                     
 
 def isLineFull(line):
+    #retorna se a linha tá cheia
     global mem, assoc
     for p in range(assoc):
         if mem[p][line][0] == 0:
@@ -211,6 +208,7 @@ def isLineFull(line):
         
             
 def isFull():
+    #retorna se a cache tá cheia
     global mem
     for r in range(nSets):
         for p in range(assoc):
