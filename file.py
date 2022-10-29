@@ -4,6 +4,12 @@ Created on Mon Oct 10 21:25:24 2022
 
 @author: arthur souza
 @author: rafael grimmler
+
+cache_simulator 256 4 1 R 1 bin_100.bin
+
+cache_simulator 128 2 4 R 1 bin_1000.bin
+
+cache_simulator 256 1 2 R 1 bin_10000.bin
 """
 
 import pandas as pd
@@ -41,7 +47,6 @@ def read():
     
     #print("> cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada")
     cmd = input("> ")
-    cmd = 'cache_simulator 256 1 2 R 1 bin_10000.bin'
     if "cache_simulator" not in cmd:
         cmd += "c "
     cmd = cmd.split(" ")
@@ -131,10 +136,11 @@ def run():
         
         #seleciona o index da memoria
         cacheIndex = intIndex%nSets if intIndex > 0 else 0
-        
+        print('{} {}'.format(number,cacheIndex))
         if assoc > 1:
             for p in range(assoc):
                 if mem[p][cacheIndex][1] == intTag:
+                    print("deu hit")
                     nHits+=1
                     fHit = True
                     if subs=='L':
@@ -167,6 +173,7 @@ def run():
                         mem[pos][cacheIndex][2] = 0
                 else:
                     nMissComp+=1
+                    print('miss compulsorio - {}'.format(setIndex))
                     mem[setIndex][cacheIndex][0] = 1
                     mem[setIndex][cacheIndex][1] = intTag             
                     if subs=='L':
@@ -187,6 +194,8 @@ def run():
                 else:
                     nMissConf+=1
                 mem[0][cacheIndex][1] = intTag 
+        print(mem)
+        input('')
         line = f.read(4)
 
 def findBiggerPol(line):
