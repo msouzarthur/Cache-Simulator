@@ -47,8 +47,6 @@ def main():
     
 def buildCache():
     global nAssoc, nSets, mem, subs
-    print(nAssoc)
-    print(nSets)
     #parametriza a cache
     
     #define o tipo de bloco
@@ -59,12 +57,11 @@ def buildCache():
         #validade, tag, lru
         block = [0, None, None]
     
-    for c in range(nAssoc):
-        #cada assoc possui uma sequencia de array
+    for c in range(nSets):
+        #percorre os indices
         sets = []
-        #pra cada sequencia de array
-        for i in range(int(nSets)):
-            print('linha {}'.format(nSets))
+        #pra cada indice possui um bloco com assoc
+        for i in range(nAssoc):
             sets.append(block)
         mem.append(sets)
     return False
@@ -75,9 +72,9 @@ def runFile():
     return False
 
 def printCache():
-    global mem
-    for p in mem:
-        print("p", end = ' ')
+    global mem, nSets
+    for l in range(nSets):
+        print(mem[l])
 
 
 def printEx():
