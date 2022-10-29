@@ -9,9 +9,7 @@ Created on Sat Oct 29 07:46:43 2022
 '''
 cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada
 cache_simulator 256 4 1 R 1 bin_100.bin
-
 cache_simulator 128 2 4 R 1 bin_1000.bin
-
 cache_simulator 256 1 2 R 1 bin_10000.bin
 cache_simulator 512 8 2 R 1 vortex.in.sem.persons.bin
 '''
@@ -45,14 +43,12 @@ def main():
     readCommand()
     buildCache()
     runFile()
-    
     printEx()
     
 def buildCache():
     global nAssoc, nSets, mem, subs, fifoList
     #parametriza a cache
-    
-    
+        
     for c in range(nSets):
         #percorre os indices
         sets = []
@@ -98,41 +94,48 @@ def runFile():
         #seleciona o index da memoria
         cacheIndex = intIndex%nSets if intIndex > 0 else 0
         
-    
-        #tá disponivel
-        #print('tá full: ',isLineFull(cacheIndex))
+        #pos = posicao vazia ou -1
         pos = isLineFull(cacheIndex)
+        
+        #fHit = posicao de hit ou -1
         fHit = isHit(cacheIndex,intTag)
-        #print('fhit: ',fHit)
+        
+        #se gerou um hit
         if mem[cacheIndex][fHit][1]==intTag and fHit!=-1:
-            nHits+=1
-            #print('deu hit')
-            
+            nHits+=1    
+            #tratativa de lru
+            #atualiza o valor LRU
             if subs=='L':
                 for j in range(nAssoc):
                     if mem[cacheIndex][fHit][2] > mem[cacheIndex][j][2]:
                         mem[cacheIndex][j][2] += 1
-                mem[cacheIndex][fHit][2] = 0
-                
+                mem[cacheIndex][fHit][2] = 0    
+        #se validade é zero e gerou um miss       
         elif mem[cacheIndex][pos][0] == 0 and pos!=-1:
+            #gera miss compulsorio
             mem[cacheIndex][pos][0] = 1
             mem[cacheIndex][pos][1] = intTag
             nMissComp += 1
-            
+            #tratativa de LRU
             if subs=='L':
                 mem[cacheIndex][pos][2] = 0
                 for j in range(nAssoc):
                     if j != pos and mem[cacheIndex][j][2]!=None:
-                        mem[cacheIndex][j][2] += 1
-                
+                        mem[cacheIndex][j][2] += 1 
+        #se linha cheia e miss
         elif pos == -1 and fHit==-1:
+            #se cache está cheia
             if isFull():
                 nMissCap+=1
             else:
                 nMissConf+=1
+            #tratativa de random
             if subs == 'R':
-                rPos = random.randint(0, nAssoc-1)
+                rPos = 0 
+                if nAssoc>1:
+                    rPos = random.randint(0, nAssoc-1)
                 mem[cacheIndex][rPos][1] = intTag
+            #tratativa de fifo
             elif subs == 'F':
                 fPos = fifoList[cacheIndex]
                 mem[cacheIndex][fPos][1] = intTag
@@ -140,6 +143,7 @@ def runFile():
                     fifoList[cacheIndex] = 0
                 else:
                     fifoList[cacheIndex] = fPos+1
+            #tratativa de LRU
             elif subs == "L":
                 lPos = 0
                 for j in range(nAssoc):
@@ -151,40 +155,28 @@ def runFile():
                 mem[cacheIndex][lPos][2] = 0
                 mem[cacheIndex][lPos][1] = intTag
                 
-                #se for miss conf
-                #substitui o pol == nAssoc-1 e todos incrementam
-            
-        #printCache()
-        #print('{} {} {} '.format(cacheIndex, target, number))
-        #input("")
+        '''descomentar para debugging   
+        printCache()
+        print('{} {} {} '.format(cacheIndex, target, number))
+        input("")'''
         line = f.read(4)
-
-def findBiggerPol(line):
-    global mem, nAssoc
-    
-    for p in range(nAssoc):
-        if mem[line][p][2] == nAssoc-1:
-            return p
-    return -1
-                    
+                 
 def isHit(line, tag):
+    #retorna posicao de hit ou -1
     global mem, nAssoc
     for p in range(nAssoc):
         if mem[line][p][1] == tag:
             return p
     return -1
     
-
 def isLineFull(line):
-    #retorna se a linha tá cheia
+    #retorna posicao livre ou -1 se estiver cheia
     global mem, nAssoc
     for p in range(nAssoc):
         if mem[line][p][0] == 0:
             return p
     return -1
         
-        
-            
 def isFull():
     #retorna se a cache tá cheia
     global mem, nSets, nAssoc
@@ -193,19 +185,19 @@ def isFull():
             if mem[r][p][0] == 0:
                 return False
     return True
-    
+  
 def printCache():
     global mem, nSets
     for l in range(nSets):
-        print(mem[l])
+        print(l, mem[l])
 
 
 def printEx():
     #exibe as informacoes finais
-    global nAccess, nHits, nMiss, nMissComp, nMissCap, nMissConf, nFlag
+    global nAccess, nHits, nMiss, nMissComp, nMissCap, nMissConf, nFlag, nSets
     nMiss = nMissComp + nMissCap + nMissConf
     if nFlag == 0:
-        print('pandas')
+        printCache()
     elif nFlag == 1:
         print('{}, {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f}'.format(nAccess, nHits/nAccess, nMiss/nAccess, nMissComp/(nMiss), nMissCap/(nMiss), nMissConf/(nMiss)))        
 
@@ -214,9 +206,7 @@ def readCommand():
     #leitura de entrada
     global file, nAssoc, nBlockSize, nSets, nFlag, subs, mem
     cmd = input("> ")
-    
-    #cmd = 'cache_simulator 256 1 2 R 1 bin_10000.bin'
-    
+
     #trata a falta da chamada para ter um padrao de comprimento
     if "cache_simulator" not in cmd:
         cmd += "cs "
