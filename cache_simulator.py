@@ -238,7 +238,7 @@ def readCommand():
     
     #trata o nome do arquivo
     file = cmd[6].strip()
-    file = "./"+file
+    file = r"./"+file
     
     if not os.path.isfile(file):
         print("> arquivo {} não encontrado".format(file))
