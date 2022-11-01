@@ -102,7 +102,7 @@ def runFile():
             #atualiza o valor LRU
             if subs=='L':
                 for j in range(nAssoc):
-                    if mem[cacheIndex][fHit][2] > mem[cacheIndex][j][2]:
+                    if mem[cacheIndex][j][2] != None and mem[cacheIndex][fHit][2] > mem[cacheIndex][j][2] :
                         mem[cacheIndex][j][2] += 1
                 mem[cacheIndex][fHit][2] = 0    
         #se validade é zero e gerou um miss       
